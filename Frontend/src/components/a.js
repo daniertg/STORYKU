@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Badge, InputGroup, Row, Col } from 'react-bootstrap';
 import axios from 'axios';
-import { FaArrowLeft } from 'react-icons/fa'; 
+import { FaArrowLeft } from 'react-icons/fa'; // Pastikan Anda memiliki react-icons
 
 function AddStory() {
   const [title, setTitle] = useState('');
   const [writerName, setWriterName] = useState('');
   const [synopsis, setSynopsis] = useState('');
-  const [category, setCategory] = useState(''); 
+  const [category, setCategory] = useState(''); // Default kategori dikosongkan
   const [coverImage, setCoverImage] = useState(null);
   const [tags, setTags] = useState([]);
   const [currentTag, setCurrentTag] = useState('');
@@ -18,6 +18,7 @@ function AddStory() {
   const handleAddTag = (e) => {
     if (e.key === 'Enter' && currentTag.trim() !== '') {
       e.preventDefault();
+      // Menambahkan tag tanpa tanda kurung atau tanda kutip
       setTags((prevTags) => [...prevTags, currentTag.trim()]);
       setCurrentTag('');
     }
@@ -30,13 +31,11 @@ function AddStory() {
   const handleSave = async () => {
     const formData = new FormData();
     formData.append('title', title);
-    formData.append('author', writerName); 
+    formData.append('writerName', writerName);
     formData.append('synopsis', synopsis);
     formData.append('category', category);
-    if (coverImage) {
-      formData.append('coverImage', coverImage);
-    }
-    formData.append('tags', tags.join(',')); 
+    formData.append('coverImage', coverImage);
+    formData.append('tags', tags.join(',')); // Mengonversi array menjadi string yang dipisahkan koma
     formData.append('status', status);
 
     try {
@@ -62,7 +61,7 @@ function AddStory() {
           fontSize: '0.875rem', 
           padding: '0.5rem 1rem', 
           borderRadius: '50px', 
-          backgroundColor: '#f0f0f0', 
+          backgroundColor: '#f0f0f0', // Warna abu-abu
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -189,7 +188,7 @@ function AddStory() {
         </Button>
         <Button 
           variant="secondary" 
-          onClick={() => navigate('/add-chapter')}
+          onClick={() => {}} 
           style={{ backgroundColor: 'orange', borderColor: 'orange' }}
         >
           + Add Chapter

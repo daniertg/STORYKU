@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Table, Form, Button, Modal, Badge, Container } from 'react-bootstrap';
-import { FaSearch } from 'react-icons/fa';
+import { Table, Form, Button, Modal, Badge, Container, Dropdown } from 'react-bootstrap';
+import { FaSearch, FaEllipsisH } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
 function StoryManagement() {
@@ -33,9 +33,12 @@ function StoryManagement() {
   };
 
   const filteredStories = stories.filter(story => {
+    const title = story.title || '';
+    const author = story.author || '';
+    
     return (
-      (story.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-       story.author.toLowerCase().includes(searchTerm.toLowerCase())) &&
+      (title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+       author.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (filterCategory ? story.category === filterCategory : true) &&
       (filterStatus ? story.status === filterStatus : true)
     );
@@ -61,8 +64,8 @@ function StoryManagement() {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mb-3"
           style={{ 
-            paddingLeft: '30px', // Menambahkan ruang untuk ikon
-            backgroundColor: '#e0e0e0', // Warna abu-abu
+            paddingLeft: '30px', 
+            backgroundColor: '#e0e0e0', 
           }}
         />
       </div>
@@ -70,8 +73,8 @@ function StoryManagement() {
         Filter
       </Button>
       <Button variant="success" className="mb-3 ms-2" onClick={() => navigate('/add-story')}>
-  + Add Story
-</Button>
+        + Add Story
+      </Button>
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -81,26 +84,39 @@ function StoryManagement() {
             <th>Category</th>
             <th>Keywords</th>
             <th>Status</th>
+            <th></th> {/* Empty column for the menu button, now at the right end */}
           </tr>
         </thead>
         <tbody>
           {filteredStories.map((story, index) => (
             <tr key={story.id}>
               <td>{(currentPage - 1) * 5 + index + 1}</td>
-              <td>{story.title}</td>
-              <td>{story.author}</td>
-              <td>{story.category}</td>
+              <td>{story.title || 'N/A'}</td>
+              <td>{story.author || 'N/A'}</td>
+              <td>{story.category || 'N/A'}</td>
               <td>
-                {story.tags.map((tag, i) => (
+                {story.tags?.map((tag, i) => (
                   <Badge key={i} bg="secondary" className="me-1">
                     {tag}
                   </Badge>
-                ))}
+                )) || 'N/A'}
               </td>
               <td>
                 <Badge bg={story.status === 'Publish' ? 'success' : 'warning'}>
-                  {story.status}
+                  {story.status || 'N/A'}
                 </Badge>
+              </td>
+              <td>
+                <Dropdown align="end">
+                  <Dropdown.Toggle variant="light" id="dropdown-basic">
+                    <FaEllipsisH />
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => navigate(`/edit-story/${story.id}`)}>Edit Story</Dropdown.Item>
+                    <Dropdown.Item onClick={() => navigate(`/detail-story/${story.id}`)}>Detail Story</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               </td>
             </tr>
           ))}
@@ -128,59 +144,57 @@ function StoryManagement() {
 
       {/* Modal for Filters */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
-  <Modal.Header closeButton>
-    <Modal.Title>Filter</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form.Group>
-      <Form.Label>Category</Form.Label>
-      <Form.Control
-        as="select"
-        value={filterCategory}
-        onChange={(e) => setFilterCategory(e.target.value)}
-      >
-        <option value="">All</option>
-        <option value="Financial">Financial</option>
-        <option value="Technology">Technology</option>
-        <option value="Health">Health</option>
-      </Form.Control>
-    </Form.Group>
-    <Form.Group>
-      <Form.Label>Status</Form.Label>
-      <Form.Control
-        as="select"
-        value={filterStatus}
-        onChange={(e) => setFilterStatus(e.target.value)}
-      >
-        <option value="">All</option>
-        <option value="Publish">Publish</option>
-        <option value="Draft">Draft</option>
-      </Form.Control>
-    </Form.Group>
-  </Modal.Body>
-  <Modal.Footer className="d-flex justify-content-between">
-    <Button variant="outline-secondary" onClick={() => {
-      // Reset filters
-      setFilterCategory('');
-      setFilterStatus('');
-    }}>
-      Reset 
-    </Button>
-    <div>
-      <Button variant="outline-secondary" onClick={() => setShowModal(false)}>
-        Close
-      </Button>
-      <Button variant="primary" style={{ marginLeft: '10px' }} onClick={() => {
-        // Apply filters logic
-        setShowModal(false);
-      }}>
-         Filters
-      </Button>
-    </div>
-  </Modal.Footer>
-</Modal>
-
-
+        <Modal.Header closeButton>
+          <Modal.Title>Filter</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group>
+            <Form.Label>Category</Form.Label>
+            <Form.Control
+              as="select"
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="Financial">Financial</option>
+              <option value="Technology">Technology</option>
+              <option value="Health">Health</option>
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Status</Form.Label>
+            <Form.Control
+              as="select"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="Publish">Publish</option>
+              <option value="Draft">Draft</option>
+            </Form.Control>
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer className="d-flex justify-content-between">
+          <Button variant="outline-secondary" onClick={() => {
+            // Reset filters
+            setFilterCategory('');
+            setFilterStatus('');
+          }}>
+            Reset 
+          </Button>
+          <div>
+            <Button variant="outline-secondary" onClick={() => setShowModal(false)}>
+              Close
+            </Button>
+            <Button variant="primary" style={{ marginLeft: '10px' }} onClick={() => {
+              // Apply filters logic
+              setShowModal(false);
+            }}>
+              Filters
+            </Button>
+          </div>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

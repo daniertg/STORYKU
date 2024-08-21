@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Form, Button, Table } from 'react-bootstrap';
-
+import { FaArrowLeft } from 'react-icons/fa'; 
 function AddChapter() {
   const navigate = useNavigate(); // Mengganti useHistory dengan useNavigate
 
@@ -12,7 +12,25 @@ function AddChapter() {
 
   return (
     <Container>
-      <h1>Add Chapter</h1>
+       <h2 className="mb-4" style={{ marginTop: '2rem' }}>Add Chapter</h2>
+       <Button 
+        variant="light" 
+        onClick={() => navigate('/add-story')} 
+        className="mb-3"
+        style={{ 
+          fontSize: '0.875rem', 
+          padding: '0.5rem 1rem', 
+          borderRadius: '50px', 
+          backgroundColor: '#f0f0f0', 
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '1rem' 
+        }}
+      >
+        <FaArrowLeft style={{ fontSize: '1rem', marginRight: '0.5rem' }} />
+        Back
+      </Button>
       <Form>
         <Form.Group>
           <Form.Label>Chapter Title</Form.Label>
